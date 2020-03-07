@@ -2,33 +2,57 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <spring:url value="/resources/js/nano/nano.min.js" var="nanoJs" />
+    <spring:url value="/resources/mustache.min.js" var="mustacheJs" />
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
             integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
             crossorigin="anonymous"></script>
-    <script src="${nanoJs}"></script>
+    <script src="${mustacheJs}"></script>
     <title>Titulo</title>
 </head>
 <body>
-<p style="width:100%; background-color:powderblue;">${message}</p>
-<button id="getAssyncData">Get my info</button>
-<p id="template" style="display: none">Hello {surname}, {name} Your age is {age} years</p>
+<%--<a href="/index/getusers">go to list</a>--%>
+<div id="container">
+    <script id="template" type="x-tmpl-mustache">
+        <div id="users-table">
+            <h2>{{title}}</h2>
+            <h5>{{description}}</h5>
+            <table>
+                <tr>
+                    <th>Apellidos</th>
+                    <th>Nombre</th>
+                    <th>Edad</th>
+                </tr>
+                {{#personList}}
+                <tr>
+                    <td>{{surname}}</td>
+                    <td>{{name}}</td>
+                    <td>{{age}}</td>
+                </tr>
+                {{/personList}}
+            </table>
+        </div>
+    </script>
 
-<div id="tableContainer"></div>
 
-<p id="result"></p>
+</div>
+
+<p id="target">loading...</p>
+
 <script type="text/javascript">
     $(document).ready(function(){
 
-        $("#getAssyncData").click(function(){
-            $.get("/nano_js_war/index/getuserinfo", function(data, status){
-                var person = data;
-                console.log('json: '+person);
-                var template =  $("#template").text();
+        setTimeout(function(){
+
+            $.get("/mustache_js_war/index/getusers", function(data, status){
+
+                console.log('json: '+data);
+                var template = document.getElementById('template').innerHTML;
                 console.log('template --> '+template);
-                $("#result").html(nano(template, person));
+                var rendered = Mustache.render(template, data);
+                document.getElementById('target').innerHTML = rendered;
+
             });
-        });
+        }, 3000);
 
 
     })

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 @Controller
 public class IndexController {
@@ -19,39 +20,29 @@ public class IndexController {
         return "index";
     }
 
-
-    @ResponseBody
-    @RequestMapping(value = "/index/getuserinfo", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public Person getPerson() {
-        Person p = new Person();
-        p.setName("Fabián");
-        p.setSurname("Dios Rodas");
-        p.setAge(29);
-
-        return p;
-    }
-
     @ResponseBody
     @RequestMapping(value = "/index/getusers", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<Person> getPersonList() {
-        Person p = new Person();
-        p.setName("Fabián");
-        p.setSurname("Dios Rodas");
-        p.setAge(29);
-        Person p2 = new Person();
-        p2.setName("Manolo");
-        p2.setSurname("Gafotas González");
-        p2.setAge(54);
-        Person p3 = new Person();
-        p3.setName("Tamara");
-        p3.setSurname("Dios Rodas");
-        p3.setAge(24);
-
+    public GetPageResponse getPersonList() {
 
         List<Person> personList = new ArrayList<>();
-        personList.add(p);
-        personList.add(p2);
-        personList.add(p3);
-        return personList;
+        for (int it = 0; it < 20; it++) {
+            personList.add(genRandomPerson());
+        }
+
+        GetPageResponse response = new GetPageResponse();
+        response.setTitle("Lorem Ipsum");
+        response.setDescription("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.");
+        response.setPersonList(personList);
+        return response;
+    }
+
+    private Person genRandomPerson() {
+        Random rand = new Random();
+        int random = rand.nextInt(100);
+        Person p = new Person();
+        p.setName("Person_"+random);
+        p.setSurname("Surname_"+random);
+        p.setAge(rand.nextInt(50));
+        return p;
     }
 }
